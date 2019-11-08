@@ -17,18 +17,32 @@ export default function UpdateMovie(props) {
         })
     }
 
+    const handleChangeStars = (event) => {
+        setMovie({
+            ...movie,
+            stars: [event.target.value]
+        })
+    }
+
+    useEffect(() => {
+        axios.get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+            .then(res => {
+                setMovie(res.data)
+            })
+            .catch(err => console.log(err))
+    }, [props.match.params.id])
+
     const handleSubmit = (event, id) => {
         event.preventDefault()
 
-        axios.put(`/update-movies/${id}`, movie)
+        axios.put(`http://localhost:5000/api/movies/${movie.id}`, movie)
             .then(res => {
-                console.log(res)
+                props.history.push("/")
             })
             .catch(err => {
                 console.log(err)
             })
         
-        props.history.push("/")
     }
 
     return (
@@ -37,22 +51,28 @@ export default function UpdateMovie(props) {
                 <input 
                     type="text"
                     name="title"
-                    placeholder="Title"
+                    value={movie.title}
                     onChange={handleChange}
                 />
                 <input 
                     type="text"
                     name="director"
-                    placeholder="Director"
+                    value={movie.director}
                     onChange={handleChange}
                 />
                 <input 
                     type="text"
                     name="metascore"
-                    placeholder="Metascore"
+                    value={movie.metascore}
                     onChange={handleChange}
                 />
-                <button>Submit</button>
+                <input 
+                    type="text"
+                    name="stars"
+                    value={movie.stars}
+                    onChange={handleChangeStars}
+                />
+                <button type="submit">Submit</button>
             </form>
         </div>
     )
